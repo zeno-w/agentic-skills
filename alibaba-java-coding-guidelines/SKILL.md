@@ -15,11 +15,10 @@ The guidelines are organized into the following sections. For detailed rules, re
 | OOP Conventions | `references/oop-conventions.md` | When writing POJOs, using equals/hashCode, inheritance, casting |
 | Collection & Concurrency | `references/collection-concurrency.md` | When using collections, thread pools, locks, concurrent utilities |
 | Exception, Logging & Control | `references/exception-logging-control.md` | When handling exceptions, writing log statements, control flow |
-| MySQL Database | `references/mysql-conventions.md` | When writing SQL, designing tables, using MyBatis/JPA |
 | Format, Comments & Structure | `references/format-comments-structure.md` | When formatting code, writing comments, organizing project structure |
 | Unit Test & Security | `references/unit-test-security.md` | When writing tests, handling security concerns |
 
-## Quick-Reference: Top 30 Mandatory Rules
+## Quick-Reference: Top 27 Mandatory Rules
 
 These are the most frequently violated mandatory rules. Always check these first:
 
@@ -53,17 +52,14 @@ These are the most frequently violated mandatory rules. Always check these first
 21. Use SLF4J + parameterized logging: `log.info("User {}", userId)`
 22. Never log sensitive data (passwords, tokens, ID numbers)
 
-### Control & Format (4 rules)
+### Control & Format (2 rules)
 23. Every `switch` must have a `default` case
 24. Always use braces `{}` even for single-line `if/else/for/while`
-25. Do not use `SELECT *` in SQL; specify exact columns
-26. Use `COUNT(*)` instead of `COUNT(column)` or `COUNT(1)`
 
-### Security (4 rules)
-27. Always use `#{}` (parameterized) in MyBatis, never `${}` for user input
-28. Use BCrypt/Argon2 for passwords; never MD5/SHA1
-29. Validate all user input server-side; use Bean Validation annotations
-30. Do not expose stack traces in error responses to clients
+### Security (3 rules)
+25. Use BCrypt/Argon2 for passwords; never MD5/SHA1
+26. Validate all user input server-side; use Bean Validation annotations
+27. Do not expose stack traces in error responses to clients
 
 ## How to Apply These Guidelines
 
@@ -78,7 +74,7 @@ These are the most frequently violated mandatory rules. Always check these first
 
 ### When Reviewing Java Code
 
-1. Check the Quick-Reference Top 30 rules first - these are the most common violations
+1. Check the Quick-Reference Top 27 rules first - these are the most common violations
 2. For each code area, read the corresponding reference file and verify compliance
 3. Categorize violations as:
    - **Mandatory**: Must be fixed. These prevent bugs, security issues, or serious maintainability problems.
@@ -90,8 +86,7 @@ These are the most frequently violated mandatory rules. Always check these first
 1. Prioritize fixing Mandatory violations first
 2. Apply naming convention fixes across the entire codebase consistently
 3. Refactor thread-unsafe patterns (SimpleDateFormat, improper thread pools, missing ThreadLocal cleanup)
-4. Replace `SELECT *` with explicit column lists
-5. Add proper exception handling and logging
+4. Add proper exception handling and logging
 
 ## Common Anti-Patterns to Flag
 
