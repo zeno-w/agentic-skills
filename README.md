@@ -20,14 +20,14 @@ git submodule update --init --recursive
 
 | Skill | 说明 | 触发场景 |
 |-------|------|---------|
-| `alibaba-java-coding-guidelines` | 阿里巴巴 Java 开发手册规约 | 编写/审查 Java 代码、PR Review、代码风格修复 |
+| `java-coding-guidelines` | 阿里巴巴 Java 开发手册规约 | 编写/审查 Java 代码、PR Review、代码风格修复 |
 | `mysql-conventions` | MySQL 数据库设计、SQL 编写、ORM 规范 | 设计表结构、编写 SQL、使用 MyBatis/JPA |
 
 ## 目录结构
 
 ```
 soil-agentic-java-spec/
-├── alibaba-java-coding-guidelines/       # 阿里 Java 编码规范
+├── java-coding-guidelines/       # 阿里 Java 编码规范
 │   ├── SKILL.md                          # 入口：导航枢纽
 │   └── references/                       # 详细规则
 │       ├── naming-conventions.md         # 命名规约
