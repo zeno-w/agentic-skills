@@ -1,6 +1,6 @@
 ---
-name: "cola5-directory-convention"
-description: "Enforces COLA 5 directory and layer conventions for Java projects. Invoke when creating Java project structure, adding classes, deciding which layer a class belongs to, or reviewing COLA architecture compliance."
+name: "soil-cola5-architecture"
+description: "Enforces COLA 5 directory and layer conventions for Java projects. Invoke when creating Java project structure, adding classes, deciding which layer a class belongs to, or reviewing architecture compliance."
 ---
 
 # COLA 5 Directory Conventions
