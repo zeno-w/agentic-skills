@@ -21,7 +21,7 @@ domain
 entity
 ├── {AggregateRoot}.java    # 聚合根
 ├── {Entity}.java           # 实体
-└── {ValueObject}.java      # 值对象
+└── {ValueObject}V.java     # 值对象
 ```
 
 ### 命名规约
@@ -30,7 +30,7 @@ entity
 |------|---------|------|
 | 聚合根 | `{BusinessConcept}` | `Order` |
 | 实体 | `{BusinessConcept}` | `OrderItem` |
-| 值对象 | `{BusinessConcept}` | `Money`, `Address` |
+| 值对象 | `{BusinessConcept}V` | `MoneyV`, `AddressV` |
 
 ### 职责边界
 
@@ -152,13 +152,13 @@ public interface OrderGateway {
 2. Domain 模块**禁止**依赖 Spring 框架（`@Service`、`@Component` 等）
 3. 聚合根必须保护内部一致性，外部不能直接修改内部状态
 4. Gateway 接口方法命名必须使用领域语言，禁止 CRUD 风格命名
-5. 值对象必须不可变（无 setter，所有字段 final）
+5. 值对象（`V` 后缀）必须不可变（无 setter，所有字段 final）
 6. 领域事件命名必须使用过去时态
 
 ## Recommended 规则
 
 1. 聚合根继承 `AggregateRoot` 基类（提供事件注册能力）
-2. 实体使用 ID 标识，值对象通过属性判等
+2. 实体使用 ID 标识，值对象（`V` 后缀）通过属性判等
 3. 跨聚合逻辑放在 DomainService 中，不要放在实体内
 4. Gateway 接口方法数量尽量精简，按需定义
 5. 领域事件放在 entity 同级的 event 包中，不要散落在各处

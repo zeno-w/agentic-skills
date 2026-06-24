@@ -14,6 +14,7 @@ Alibaba COLA 5 clean architecture directory conventions. Apply when creating pro
 | App Layer | `references/app-layer.md` | Writing Application Service, Command/Query Executor, Processor |
 | Domain Layer | `references/domain-layer.md` | Writing Entity, Domain Service, Gateway interface, Domain Event |
 | Infrastructure Layer | `references/infrastructure-layer.md` | Implementing Gateway, writing Mapper/Repository, external client, config |
+| Object Isolation | `references/object-isolation.md` | Defining DTO/VO/DO/Entity types, deciding object ownership, reviewing cross-layer object flow |
 
 ## How to Apply
 
@@ -23,7 +24,8 @@ Read `references/project-structure.md` → create modules → define base packag
 ### Adding New Class
 1. Identify the responsibility (inbound / orchestration / business logic / external access)
 2. Read the corresponding layer reference
-3. Place class in correct package, follow naming and dependency rules
+3. Read `references/object-isolation.md` to determine the correct object type and ownership
+4. Place class in correct package, follow naming and dependency rules
 
 ### Reviewing Architecture Compliance
 1. Read each layer reference

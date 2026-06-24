@@ -11,8 +11,21 @@ app
     ├── executor
     │   ├── command         # 写操作执行器
     │   └── query           # 读操作执行器
-    └── processor           # 流程编排器（可选）
+    ├── processor           # 流程编排器（可选）
+    ├── command             # 写操作入参（Cmd）
+    ├── query               # 读操作入参（Qry）
+    └── vo                  # 视图对象（VO）
 ```
+
+## 对象类型命名规约
+
+App 模块定义 Cmd / Qry / VO 三种对象类型，供 adapter 层使用。详见 `references/object-isolation.md`。
+
+| 类别 | 命名格式 | 示例 |
+|------|---------|------|
+| Command | `{Resource}{Action}Cmd` | `OrderCreateCmd` |
+| Query | `{Resource}{Action}Qry` | `OrderListQry` |
+| View Object | `{Resource}VO` | `OrderVO` |
 
 ## service 包
 
@@ -112,4 +125,4 @@ public class OrderApplicationService {
 2. 一个 CmdExe / QryExe 只做一件事（单一职责）
 3. 简单用例直接在 Service 中编排，不需要额外 Processor
 4. Query Executor 中可直接调用 Gateway 的查询方法，不必经过领域服务
-5. App 层入参和出参使用 Adapter 层定义的 Cmd / Qry / VO，不要在 App 层重新定义
+5. Cmd / Qry / VO 定义在 app 模块，供 adapter 层使用，不要在 adapter 层重新定义

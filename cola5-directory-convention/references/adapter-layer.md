@@ -33,11 +33,11 @@ Controller 的 URI 设计、HTTP 方法选择、状态码返回必须遵循 `res
 
 ### 命名规约
 
-| 类别 | 命名格式 | 示例 |
-|------|---------|------|
-| Controller | `{Resource}Controller` | `OrderController` |
-| DTO (Request) | `{Resource}{Action}Cmd` / `{Resource}{Action}Qry` | `OrderCreateCmd`, `OrderListQry` |
-| DTO (Response) | `{Resource}VO` | `OrderVO` |
+| 类别 | 命名格式 | 示例 | 归属 |
+|------|---------|------|------|
+| Controller | `{Resource}Controller` | `OrderController` | adapter |
+| Request DTO | `{Resource}{Action}Cmd` / `{Resource}{Action}Qry` | `OrderCreateCmd`, `OrderListQry` | app（adapter 使用） |
+| Response DTO | `{Resource}VO` | `OrderVO` | app（adapter 使用） |
 
 ### 职责边界
 
@@ -153,7 +153,9 @@ HTTP/1.1 404 Not Found
 |------|---------|------|
 | 接口实现 | `{Resource}HttpApi` | `OrderHttpApi` |
 | 接口定义 | `{Resource}Api` | `OrderApi`（可抽到独立 API jar） |
-| DTO | `{Resource}DTO` | `OrderDTO` |
+| 写入参 | `{Resource}{Action}DTO` | `OrderCreateDTO`、`OrderUpdateDTO` |
+| 读入参 | `{Resource}QueryDTO` | `OrderQueryDTO` |
+| 响应 | `{Resource}DTO` | `OrderDTO` |
 
 #### 职责边界
 
@@ -180,10 +182,16 @@ public class OrderHttpApi implements OrderApi {
     }
 
     @Override
+    @GetMapping
+    public List<OrderDTO> list(OrderQueryDTO query) {
+        return OrderApiConverter.toDTOList(orderApplicationService.listOrders(query));
+    }
+
+    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody OrderCreateDTO cmd) {
-        orderApplicationService.createOrder(cmd);
+    public OrderDTO create(@RequestBody OrderCreateDTO cmd) {
+        return OrderApiConverter.toDTO(orderApplicationService.createOrder(cmd));
     }
 }
 ```
@@ -198,7 +206,9 @@ public class OrderHttpApi implements OrderApi {
 |------|---------|------|
 | 接口实现 | `{Resource}RpcApi` | `OrderRpcApi` |
 | 接口定义 | `{Resource}Api` | `OrderApi`（可抽到独立 API jar） |
-| DTO | `{Resource}DTO` | `OrderDTO` |
+| 写入参 | `{Resource}{Action}DTO` | `OrderCreateDTO`、`OrderUpdateDTO` |
+| 读入参 | `{Resource}QueryDTO` | `OrderQueryDTO` |
+| 响应 | `{Resource}DTO` | `OrderDTO` |
 
 #### 职责边界
 
@@ -223,8 +233,13 @@ public class OrderRpcApi implements OrderApi {
     }
 
     @Override
-    public void create(OrderCreateDTO cmd) {
-        orderApplicationService.createOrder(cmd);
+    public List<OrderDTO> list(OrderQueryDTO query) {
+        return OrderApiConverter.toDTOList(orderApplicationService.listOrders(query));
+    }
+
+    @Override
+    public OrderDTO create(OrderCreateDTO cmd) {
+        return OrderApiConverter.toDTO(orderApplicationService.createOrder(cmd));
     }
 }
 ```
@@ -248,7 +263,9 @@ public class OrderRpcApi implements OrderApi {
 ```
 order-api/                        # 独立 API 模块
 ├── OrderApi.java                 # 接口定义
-├── OrderDTO.java                 # DTO
+├── OrderDTO.java                 # 响应 DTO
+├── OrderCreateDTO.java           # 写入参 DTO
+├── OrderQueryDTO.java            # 读入参 DTO
 └── pom.xml
 
 order-adapter/                    # 实现模块
@@ -259,13 +276,26 @@ order-adapter/                    # 实现模块
         └── OrderRpcApi.java      # RPC 实现
 ```
 
+### DTO 命名规约
+
+http 与 rpc 共享同一套 DTO 类型，通过方法名区分读写，不按协议拆分 DTO。
+
+| 类别 | 命名格式 | 示例 | 说明 |
+|------|---------|------|------|
+| 写入参 | `{Resource}{Action}DTO` | `OrderCreateDTO`、`OrderUpdateDTO` | Action 体现操作意图 |
+| 读入参 | `{Resource}QueryDTO` | `OrderQueryDTO` | 查询条件封装 |
+| 响应 | `{Resource}DTO` | `OrderDTO` | 资源表示，读写共用 |
+
+> **核心原则**：DTO 是服务契约，不是传输细节。HTTP 和 RPC 只是同一契约的两种传输实现，**禁止**为不同协议定义各自的 DTO。
+
 ### controller 与 api 的区别
 
 | 维度 | controller | api（http / rpc） |
 |------|-----------|-------------------|
 | 消费者 | 前端 / 移动端 | 其他微服务 |
 | 协议 | REST + JSON | HTTP + JSON / Dubbo RPC |
-| DTO 风格 | 面向 UI 裁剪（Cmd / Qry / VO） | 面向服务契约，紧凑精简（DTO） |
+| 入参风格 | CQRS 分离（`Cmd` / `Qry`） | 统一 DTO（`OrderCreateDTO` / `OrderQueryDTO`） |
+| 出参风格 | 面向 UI 裁剪（`VO`） | 面向服务契约（`DTO`） |
 | 认证方式 | 用户 Token | 服务间签名 / 内网信任 |
 | 版本策略 | URI 路径版本 `/v1/`（遵循 `restful-convention`） | URI 版本 / Dubbo `version` |
 
@@ -292,14 +322,14 @@ order-adapter/                    # 实现模块
 
 1. Controller 类必须放在 `adapter.controller` 包下
 2. HTTP 服务间调用实现类必须放在 `adapter.api.http` 包下，Dubbo RPC 实现类必须放在 `adapter.api.rpc` 包下
-3. Web 端 Request DTO 命名必须以 `Cmd`（写操作）或 `Qry`（读操作）结尾
-4. Web 端 Response DTO 命名必须以 `VO` 结尾
-5. 服务间调用 DTO 命名必须以 `DTO` 结尾，与 Web 端 DTO 区分
-6. Controller、HttpApi、RpcApi 中**禁止**编写业务逻辑，仅做参数校验和调用转发
-7. Adapter 层**禁止**直接依赖 domain 或 infrastructure 模块
-8. DTO 类**禁止**泄露到 app 层或 domain 层
-9. Controller HTTP 接口设计**必须**遵循 `restful-convention`（URI 命名、HTTP 方法、状态码、版本与分页）
-10. Controller **禁止**一律返回 200，非 200 状态码必须通过 `@ResponseStatus` 声明（201 / 204 等）
+3. Cmd / Qry / VO 定义在 app 模块，adapter 通过依赖 app 使用，禁止在 adapter 中重新定义
+4. 服务间调用 DTO 命名规约：写入参 `{Resource}{Action}DTO`、读入参 `{Resource}QueryDTO`、响应 `{Resource}DTO`，定义在 adapter.api 或独立 API jar，禁止泄露到 app 或 domain
+5. Controller、HttpApi、RpcApi 中**禁止**编写业务逻辑，仅做参数校验和调用转发
+6. Adapter 层**禁止**直接依赖 domain 或 infrastructure 模块
+7. DTO 类**禁止**泄露到 app 层或 domain 层
+8. Controller HTTP 接口设计**必须**遵循 `restful-convention`（URI 命名、HTTP 方法、状态码、版本与分页）
+9. Controller **禁止**一律返回 200，非 200 状态码必须通过 `@ResponseStatus` 声明（201 / 204 等）
+10. http 与 rpc **禁止**各自定义独立的 DTO，必须共享同一套 DTO 类型
 
 ## Recommended 规则
 
