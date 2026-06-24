@@ -4,7 +4,7 @@
 
 - **Must** use proper HTTP status codes. Do **not** always return 200 with a custom `code` field in the body.
 - The HTTP status code is the primary indicator of request outcome. A custom business code in the response body is supplementary, not a replacement.
-- When the HTTP request fails (with a 4xx/5xx status), a unified error response body `{"errCode":"ERROR_CODE","message":"error description"}` is returned.
+- When the HTTP request fails (with a 4xx/5xx status), a unified error response body `{"errCode":"ERROR_CODE","errDesc":"error description"}` is returned.
 - When the HTTP request is successful (with a 2xx status), either the response body is not returned or the response body is directly returned.
 
 ### Anti-Pattern
@@ -24,7 +24,7 @@ This is wrong — the status code says success but the body says failure.
 HTTP/1.1 404 Not Found
 Content-Type: application/json
 
-{ "errCode": "NOT_FOUND", "message": "Activity not found" }
+{ "errCode": "NOT_FOUND", "errDesc": "Activity not found" }
 ```
 
 ## 2. Success Status Codes (2xx)
@@ -84,7 +84,7 @@ When returning errors, include a structured error body:
 ```json
 {
   "errCode": "ERROR_CODE",
-  "message": "error description"
+  "errDesc": "error description"
 }
 ```
 

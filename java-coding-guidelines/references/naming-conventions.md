@@ -4,7 +4,7 @@
 2. No Chinese/Pinyin/mixed naming. Use English. ✅ `alibaba` / `taobao` (internationally recognized names OK)
 3. No discriminatory or offensive words.
 4. Class names: UpperCamelCase. ✅ `ForceCode` / `UserDO` / `HtmlDTO`
-5. DO/BO/DTO/VO/AO/PO/UID suffixes allowed. ✅ `UserDO` / `HtmlDTO`
+5. DO/BO/DTO/VO/AO/PO/UID suffixes allowed. ✅ `UserDO` / `HtmlDTO`. UID = Unique Identifier，用于封装唯一标识，如 `UserUID`。
 6. Abstract classes: `Abstract`/`Base` prefix. ✅ `BaseUserService`
 7. Exception classes: `Exception` suffix. ✅ `BusinessException`
 8. Test classes: `{Class}Test`. ✅ `UserServiceTest`
