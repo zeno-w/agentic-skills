@@ -191,23 +191,6 @@
   public class OrderDoc extends BaseDoc<Long> { ... }
   ```
 - In production, manage indexes via migration scripts (Mongock, etc.), not auto-index-creation.
-- Configure Jackson to handle Long ID serialization globally (recommended for `BaseDoc<Long>` entities):
-  ```java
-  @Configuration
-  public class JacksonConfig {
-      @Bean
-      public ObjectMapper objectMapper() {
-          ObjectMapper mapper = new ObjectMapper();
-          SimpleModule module = new SimpleModule();
-          module.addSerializer(Long.class, ToStringSerializer.instance);
-          module.addSerializer(Long.TYPE, ToStringSerializer.instance);
-          mapper.registerModule(module);
-          return mapper;
-      }
-  }
-  ```
-  - Since `BaseDoc<ID>` uses a generic type parameter, `@JsonSerialize(using = ToStringSerializer.class)` cannot be placed on the `id` field in the base class. Use global Jackson Long-to-String serialization instead.
-  - Note: Global Long-to-string serialization affects all Long fields. If only ID fields need this, use per-field `@JsonSerialize` in each derived class that uses `BaseDoc<Long>`.
 
 ## Anti-Patterns
 

@@ -36,6 +36,11 @@ Read `references/client-module.md` → define Api interfaces → define DTO → 
 2. Verify: no layer bypass, no wrong dependency direction, correct package placement
 3. Categorize violations as **Mandatory** (must fix) / **Recommended** (should fix) / **Reference** (nice to have)
 
+### Choosing Lombok Annotations
+1. Identify the layer and object type (Entity / Cmd / DTO / DO / Service)
+2. Read references/lombok-usage.md for the correct annotation combination
+3. Verify: Entity has no @Data/@Setter/@Builder, DTO/DO have @NoArgsConstructor + @AllArgsConstructor
+
 ## Core Dependency Rule
 
 ```
