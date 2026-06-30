@@ -110,3 +110,4 @@ ClassName obj = ClassName.builder()
 8. **构造/字段/枚举用表格**
 9. **空描述标为** `*(无描述)*`
 10. **Builder 独占一节**
+11. **文件编码 UTF-8 无 BOM** — 所有输出文件必须使用 UTF-8 编码，不带 BOM 头

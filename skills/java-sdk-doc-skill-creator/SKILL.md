@@ -137,3 +137,4 @@ docs/jsf-skills/<module-name>-doc/
 | 逐个列出 @Data 的 getter/setter | 一行概括"所有字段均有 getter/setter" |
 | Javadoc 原文照搬不浓缩 | 深度浓缩为精炼表达 |
 | 增量更新时全量重写 | 仅覆盖变更类的 .md 文件 |
+| 输出文件带 BOM 头 | 所有文件必须 UTF-8 无 BOM 编码 |
