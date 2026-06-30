@@ -16,7 +16,7 @@
 - Use `@Field("fieldName")` when Java field name differs from MongoDB field name, or to explicitly declare the mapping.
   ```java
   @Field("createdAt")
-  private LocalDateTime createdAt;
+  private OffsetDateTime createdAt;
   ```
 - Use `@BsonRepresentation(BsonType.DECIMAL128)` for `BigDecimal` fields to ensure exact precision.
   ```java
@@ -42,7 +42,7 @@
 - For complex queries, use `@Query` annotation instead of extremely long method names:
   ```java
   @Query("{ 'status': ?0, 'createdAt': { $gte: ?1 } }")
-  List<UserDoc> findActiveUsersSince(String status, LocalDateTime since);
+  List<UserDoc> findActiveUsersSince(String status, OffsetDateTime since);
   ```
 - Avoid derived query methods with more than 3 conditions. Use `@Query` or `MongoTemplate` instead.
   - BAD: `findByStatusAndRoleAndDepartmentAndCreatedAtBetween(...)` -- too long, hard to read
@@ -83,7 +83,7 @@
   ```java
   Update update = new Update();
   update.set("name", "New Name");
-  update.set("updatedAt", LocalDateTime.now());
+  update.set("updatedAt", OffsetDateTime.now());
   mongoTemplate.updateFirst(query, update, UserDoc.class);
   ```
 - Use `updateMulti` for bulk updates matching a query.
@@ -224,7 +224,7 @@ private List<OrderDoc> orders;
 
 // BAD: Overly long derived query method
 List<UserDoc> findByStatusAndRoleAndDepartmentAndCreatedAtBetween(
-    String status, String role, String dept, LocalDateTime from, LocalDateTime to);
+    String status, String role, String dept, OffsetDateTime from, OffsetDateTime to);
 
 // BAD: Full document replacement for partial update
 UserDoc user = repository.findById(id).get();
@@ -298,12 +298,12 @@ private List<Long> orderIds;
 // OK: Use @Query or MongoTemplate for complex queries
 @Query("{ 'status': ?0, 'role': ?1, 'department': ?2, 'createdAt': { $gte: ?3, $lte: ?4 } }")
 List<UserDoc> findUsersByConditions(String status, String role, String dept,
-    LocalDateTime from, LocalDateTime to);
+    OffsetDateTime from, OffsetDateTime to);
 
 // OK: Partial update with $set
 Update update = new Update()
     .set("name", "New Name")
-    .set("updatedAt", LocalDateTime.now());
+    .set("updatedAt", OffsetDateTime.now());
 mongoTemplate.updateFirst(
     Query.query(Criteria.where("_id").is(id)), update, UserDoc.class
 );

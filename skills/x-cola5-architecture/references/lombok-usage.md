@@ -95,11 +95,11 @@ public class MoneyV {
 @EqualsAndHashCode
 public class OrderSubmittedEvent {
     private final String orderId;
-    private final LocalDateTime submittedAt;
+    private final OffsetDateTime submittedAt;
 
     public OrderSubmittedEvent(String orderId) {
         this.orderId = orderId;
-        this.submittedAt = LocalDateTime.now();
+        this.submittedAt = OffsetDateTime.now();
     }
 }
 ```
@@ -200,8 +200,8 @@ public class OrderDO {
     private String orderNo;
     private String status;
     private BigDecimal totalAmount;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 }
 ```
 

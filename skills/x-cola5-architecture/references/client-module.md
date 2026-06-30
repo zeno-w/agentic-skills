@@ -89,7 +89,7 @@ public class OrderDTO {
     private String status;
     private BigDecimal totalAmount;
     private List<OrderItemDTO> items;
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 }
 ```
 
@@ -107,8 +107,8 @@ public class OrderCreateDTO {
 public class OrderQueryDTO {
 
     private String status;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private OffsetDateTime startTime;
+    private OffsetDateTime endTime;
     private Integer pageNum;
     private Integer pageSize;
 }
@@ -198,7 +198,7 @@ adapter/                         # 契约实现
 1. Client 模块仅包含 `api` 和 `dto` 两个包，不要放入其他内容
 2. 一个 `{Resource}Api` 对应一个领域资源的服务间调用能力
 3. DTO 字段使用包装类型（`Long` 而非 `long`），避免消费方反序列化 NPE
-4. DTO 中日期字段使用 `LocalDateTime` / `LocalDate`，配合 Fastjson2 序列化
+4. DTO 中日期字段使用 `OffsetDateTime` / `LocalDate`，配合 Fastjson2 序列化
 5. 当服务无服务间调用需求时，不必创建 client 模块，也不需要 adapter.api 包
 6. Client 模块的 `pom.xml` 仅依赖通用工具包（如 commons-lang3、guava），不依赖 Spring 等框架
 7. 接口版本化：Dubbo 通过 `version` 属性，HTTP 通过 URI 路径版本 `/api/v1/`

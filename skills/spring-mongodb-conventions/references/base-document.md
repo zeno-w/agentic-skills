@@ -24,11 +24,11 @@ public abstract class BaseMongoDoc<ID> {
 
     @CreatedDate
     @Field("createdAt")
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @LastModifiedDate
     @Field("updatedAt")
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @CreatedBy
     @Field("createdBy")
@@ -56,8 +56,8 @@ public abstract class BaseMongoDoc<ID> {
 | Field | Type | Annotation | Purpose |
 |-------|------|-----------|---------|
 | `id` | `ID` (generic) | `@Id` | Primary key, concrete type defined by derived class |
-| `createdAt` | `LocalDateTime` | `@CreatedDate` + `@Field("createdAt")` | Auto-filled on insert by Spring Data auditing |
-| `updatedAt` | `LocalDateTime` | `@LastModifiedDate` + `@Field("updatedAt")` | Auto-filled on insert and update by Spring Data auditing |
+| `createdAt` | `OffsetDateTime` | `@CreatedDate` + `@Field("createdAt")` | Auto-filled on insert by Spring Data auditing |
+| `updatedAt` | `OffsetDateTime` | `@LastModifiedDate` + `@Field("updatedAt")` | Auto-filled on insert and update by Spring Data auditing |
 | `createdBy` | `String` | `@CreatedBy` + `@Field("createdBy")` | Auto-filled with current auditor on insert |
 | `updatedBy` | `String` | `@LastModifiedBy` + `@Field("updatedBy")` | Auto-filled with current auditor on insert and update |
 
@@ -316,8 +316,8 @@ public class UserDoc extends BaseMongoDoc { ... }
 public class UserDoc {
     @Id
     private Long id;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
     private String createdBy;
     private String updatedBy;
     // ... business fields
@@ -338,7 +338,7 @@ public class UserDocument extends BaseMongoDoc<Long> { ... }
 // BAD: Re-declaring BaseMongoDoc fields in subclass
 public class UserDoc extends BaseMongoDoc<Long> {
     private Long id; // already in BaseMongoDoc!
-    private LocalDateTime createdAt; // already in BaseMongoDoc!
+    private OffsetDateTime createdAt; // already in BaseMongoDoc!
 }
 
 // BAD: Adding @Version on documents that are never updated (e.g., log documents)
