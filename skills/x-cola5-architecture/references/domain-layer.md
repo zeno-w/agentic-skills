@@ -36,7 +36,7 @@ entity
 
 - 封装业务规则和业务逻辑，聚合根保护内部一致性
 - 值对象不可变（无 setter，所有字段 final）
-- 允许使用 Spring 通用编程能力（依赖注入 `@Service` / `@Component` / `@Autowired` 等），**禁止**使用基础设施能力（`@Repository` / `@Transactional` / `@Cacheable` / `@Scheduled` / 数据库 / 缓存 / MQ 等）
+- 允许使用 Spring 通用编程能力（IoC/DI）：领域服务使用 `@Service` 注解，通过构造器注入 Gateway 接口。domain 模块仅依赖 `spring-context`，不依赖 `spring-boot-starter-*` 等基础设施 starter。**禁止**使用基础设施能力（`@Repository` / `@Transactional` / `@Cacheable` / `@Scheduled` / 数据库 / 缓存 / MQ 等）
 
 ### 代码示例
 
@@ -81,6 +81,8 @@ public class Order extends AggregateRoot {
 ### 代码示例
 
 ```java
+@Service
+@RequiredArgsConstructor
 public class OrderDomainService {
     private final OrderGateway orderGateway;
     private final ProductGateway productGateway;

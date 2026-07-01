@@ -109,6 +109,7 @@ public class OrderSubmittedEvent {
 使用 `@RequiredArgsConstructor` 实现构造器注入。
 
 ```java
+@Service
 @RequiredArgsConstructor
 public class OrderDomainService {
     private final OrderGateway orderGateway;
