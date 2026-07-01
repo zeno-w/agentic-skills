@@ -49,27 +49,27 @@ adapter
 @RequestMapping("/v1/orders")
 public class OrderController {
     @Resource
-    private OrderApplicationService orderApplicationService;
+    private OrderService orderService;
 
     @PostMapping @ResponseStatus(HttpStatus.CREATED)
     public OrderVO create(@RequestBody @Valid OrderCreateCmd cmd) {
-        return orderApplicationService.createOrder(cmd);
+        return orderService.createOrder(cmd);
     }
     @GetMapping("/{orderId}")
     public OrderVO getById(@PathVariable String orderId) {
-        return orderApplicationService.findById(orderId);
+        return orderService.findById(orderId);
     }
     @GetMapping
     public PageResult<OrderVO> list(OrderListQry qry) {
-        return orderApplicationService.listOrders(qry);
+        return orderService.listOrders(qry);
     }
     @PutMapping("/{orderId}") @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable String orderId, @RequestBody @Valid OrderUpdateCmd cmd) {
-        orderApplicationService.updateOrder(orderId, cmd);
+        orderService.updateOrder(orderId, cmd);
     }
     @DeleteMapping("/{orderId}") @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable String orderId) {
-        orderApplicationService.deleteOrder(orderId);
+        orderService.deleteOrder(orderId);
     }
 }
 ```
@@ -169,7 +169,12 @@ order-adapter/                # 实现模块
 |------|---------|------|
 | 消息监听 | `{EventDescription}Listener` | `PaymentResultListener` |
 
-反序列化消息体 → 转换为 app 层入参并调用。**禁止**在 listener 中写业务逻辑。
+反序列化消息体 → 转换为领域事件对象 → 调用 app 层 `EventHandler.onXxx()`。**禁止**在 listener 中写业务逻辑。
+
+> Listener 仅用于**分布式事件**（跨服务 MQ 通信），是 MQ Consumer 的适配层入口，与 Controller 同级，仅做协议适配。
+> **进程内事件**（同 JVM 跨聚合协作）不经过 listener，由 app 层 EventHandler 直接用 `@EventListener` 监听 Spring 事件总线。
+>
+> 分布式事件消费链路：`adapter listener`（反序列化 + 调用转发）→ `app eventhandler`（按领域聚合组织，按事件类型分发 → 编排领域服务）→ `domain service`（执行业务规则）。
 
 ## Mandatory 规则
 
@@ -180,6 +185,7 @@ order-adapter/                # 实现模块
 5. Adapter 层**禁止**直接依赖 domain 或 infrastructure 模块
 6. Controller HTTP 接口**必须**遵循 ``restful-convention``；**禁止**一律返回 200，成功类非 200 状态码（201、204 等）通过 ``@ResponseStatus`` 声明，错误类状态码（4xx/5xx）通过异常处理器统一返回
 7. http 与 rpc **禁止**各自定义独立的 DTO，必须共享同一套 DTO 类型
+8. Listener **禁止**直接调用 domain service 或 infrastructure，必须通过 app 层 EventHandler 间接调用
 
 ## Recommended 规则
 

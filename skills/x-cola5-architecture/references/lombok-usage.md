@@ -167,7 +167,7 @@ public class OrderVO {
 ```java
 @Service
 @RequiredArgsConstructor
-public class OrderApplicationService {
+public class OrderService {
     private final OrderDomainService orderDomainService;
     private final OrderGateway orderGateway;
 
@@ -253,7 +253,7 @@ public class OrderDTO {
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/orders")
 public class OrderController {
-    private final OrderApplicationService orderApplicationService;
+    private final OrderService orderService;
 }
 ```
 
@@ -271,7 +271,7 @@ public class OrderController {
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class OrderApplicationService {
+public class OrderService {
     public Long createOrder(OrderCreateCmd cmd) {
         log.info("Creating order for customer: {}", cmd.getCustomerId());
     }
@@ -355,7 +355,7 @@ public class MoneyV {
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class OrderApplicationService { ... }
+public class OrderService { ... }
 ```
 
 ## Mandatory 规则

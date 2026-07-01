@@ -136,17 +136,49 @@ public interface OrderGateway {
 
 ### 事件生命周期
 
+领域事件有两种消费路径：**进程内**（同 JVM）和**分布式**（跨服务 MQ）。
+
+#### 进程内事件（同 JVM）
+
 ```
-registerEvent()         save()                  publish()
-     │                    │                       │
-     ▼                    ▼                       ▼
- 存入聚合根             持久化聚合根             发布到 MQ
- 内存列表               （DB 事务提交）          （事务提交后）
+registerEvent()         save()                  publish()               handle()
+     │                    │                       │                       │
+     ▼                    ▼                       ▼                       ▼
+ domain 层              infrastructure 层       app 层控制              app 层 eventhandler
+ 存入聚合根             持久化聚合根            ApplicationEvent        @EventListener
+ 内存列表               （DB 事务提交）         Publisher 分发          同一事务内编排领域服务
+```
+
+#### 分布式事件（跨服务 MQ）
+
+```
+registerEvent()         save()                  publish()               handle()
+     │                    │                       │                       │
+     ▼                    ▼                       ▼                       ▼
+ domain 层              infrastructure 层       app 层控制              app 层 eventhandler
+ 存入聚合根             持久化聚合根            发布到 MQ               adapter listener 调用
+ 内存列表               （DB 事务提交）         （事务提交后）           独立事务编排领域服务
 ```
 
 - `registerEvent`：聚合根业务方法中调用，仅存入内存列表，**不立即发布**
 - `save`：GatewayImpl 持久化聚合根
-- `publish`：Application Service 在持久化成功后，从聚合根取出事件并发布
+- `publish`：Application Service 在持久化成功后，从聚合根取出事件并发布（进程内用 `ApplicationEventPublisher`，分布式用 `DomainEventPublisher` 发送到 MQ）
+- `handle`：
+  - **进程内**：Spring 事件总线分发 → `@EventListener` → 同一事务内编排领域服务
+  - **分布式**：adapter listener 接收 MQ 消息 → 调用 `EventHandler.onXxx()` → 独立事务编排领域服务
+
+### 事件处理分层职责
+
+| 阶段 | 所在层 | 位置 | 职责 |
+|------|--------|------|------|
+| 定义事件 | domain | `domain/event` | 不可变值对象，过去时态命名 |
+| 注册事件 | domain | `domain/entity` | 聚合根内 `registerEvent()`，仅存内存 |
+| 控制发布时机 | app | `app/service` | Application Service 在 `save()` 后发布，`clearEvents()` 避免重复 |
+| 实现发布（进程内） | app | `app/service` | `ApplicationEventPublisher.publishEvent()`，Spring 事件总线分发 |
+| 实现发布（分布式） | infrastructure | `infrastructure/event` | `DomainEventPublisher` 对接 MQ，处理序列化和发送失败重试 |
+| 消费事件（进程内） | app | `app/eventhandler` | `@EventListener` 监听，与发布者同一事务 |
+| 消费事件（分布式） | adapter | `adapter/listener` | MQ Consumer 反序列化，调用 app 层 EventHandler |
+| 处理事件 | app | `app/eventhandler` | 按领域聚合组织 EventHandler，编排领域服务完成跨聚合协作，**禁止**包含业务规则 |
 
 ## Mandatory 规则
 
