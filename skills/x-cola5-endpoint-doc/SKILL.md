@@ -1,6 +1,6 @@
 ﻿---
 name: "x-cola5-endpoint-doc"
-description: "Generates http or rpc endpoints documentation from COLA 5 adapter layer. Invoke when user asks to generate API docs, interface documentation, or list all endpoints from COLA5 adapter modules."
+description: "Generates http or rpc endpoints documentation from COLA 5 adapter layer. Invoke when user asks to generate API docs, interface documentation, or list all endpoints from COLA5 project."
 ---
 
 # Adapter API Documentation Generator
@@ -50,6 +50,8 @@ Follow the extraction rules to parse each Api interface and DTO class:
 
 Format the extracted information into the standard documentation output.
 
+**输出位置**：`docs/cola5-endpoints/` 目录下，按服务名生成文档文件。
+
 ### Step 5: Cross-Reference
 
 If both controller and client module exist:
@@ -89,4 +91,3 @@ If both controller and client module exist:
 3. Note authentication requirements if visible from code
 4. Highlight deprecated endpoints if `@Deprecated` annotation is present
 5. Include enum values when parameter types are enums
-

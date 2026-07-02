@@ -2,6 +2,10 @@
 
 Agent-consumable compact format. Output must be machine-readable, high information density, no decorative text.
 
+## Output Location
+
+文档输出到 `docs/cola5-endpoints/` 目录，按服务名生成文件（如 `docs/cola5-endpoints/order-service.md`）。
+
 ## Overall Structure
 
 ```
@@ -139,4 +143,3 @@ Shorthand constraints:
 ## Language Rule
 
 Output language matches source code javadoc language. Technical terms remain in English.
-
