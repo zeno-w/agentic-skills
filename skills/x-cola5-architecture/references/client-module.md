@@ -12,12 +12,14 @@ client/src/main/java/com/{company}/{project}/client
 
 ## 命名规约
 
-| 类别 | 命名格式 | 示例 |
-|------|---------|------|
-| 服务接口 | `{Resource}Api` | `OrderApi` |
-| 写入参 | `{Resource}{Action}DTO` | `OrderCreateDTO` |
-| 读入参 | `{Resource}QueryDTO` | `OrderQueryDTO` |
-| 响应 | `{Resource}DTO` | `OrderDTO` |
+| 类别 | 命名格式 | 示例 | 说明 |
+|------|---------|------|------|
+| 服务接口 | `{Resource}Api` | `OrderApi` | client 模块定义，供消费方依赖 |
+| 写入参 | `{Resource}{Action}DTO` | `OrderCreateDTO` | — |
+| 读入参 | `{Resource}QueryDTO` | `OrderQueryDTO` | — |
+| 响应 | `{Resource}DTO` | `OrderDTO` | — |
+
+> 接口与实现命名对照：client 定义 `{Resource}Api`（接口）→ adapter 实现 `{Resource}Http`（HTTP）/ `{Resource}Rpc`（RPC）。**禁止**实现类与接口同名。
 
 ## 代码示例
 
@@ -50,8 +52,8 @@ client/                          # 契约定义
 ├── api/OrderApi.java
 └── dto/OrderDTO.java
 adapter/api/
-├── http/OrderHttpApi.java       # @RestController implements OrderApi
-└── rpc/OrderRpcApi.java         # @DubboService implements OrderApi
+├── http/OrderHttp.java         # @RestController implements OrderApi
+└── rpc/OrderRpc.java           # @DubboService implements OrderApi
 ```
 
 - client 定义契约，adapter 实现契约（HTTP/RPC 两种传输方式）

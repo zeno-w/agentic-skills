@@ -15,7 +15,7 @@ COLA 5 各层 Lombok 注解使用规约。
 | infra | DO | `@Data @Builder @NoArgsConstructor @AllArgsConstructor` | — | ORM 需无参构造器 |
 | infra | GatewayImpl / Client | `@RequiredArgsConstructor` | — | 构造器注入 |
 | client | DTO | `@Data @Builder @NoArgsConstructor @AllArgsConstructor` | — | 反序列化需无参构造器 |
-| adapter | Controller / HttpApi / RpcApi | `@RequiredArgsConstructor` | — | 构造器注入 |
+| adapter | Controller / Http / Rpc | `@RequiredArgsConstructor` | — | 构造器注入 |
 
 ## 关键代码片段
 
@@ -57,7 +57,8 @@ public class OrderDTO { ... }             // Fastjson2/ORM 需无参构造器
 ### 依赖注入的服务类
 
 ```java
-@Service @RequiredArgsConstructor         // 统一构造器注入，不用 @Autowired
+@Service 
+@RequiredArgsConstructor         // 统一构造器注入，不用 @Autowired
 @Slf4j                                     // domain/client 禁止 @Slf4j
 public class OrderService { ... }
 ```

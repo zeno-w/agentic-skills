@@ -78,12 +78,12 @@ public class OrderController {
 
 服务间调用接口实现，http 与 rpc 共享同一套 DTO。
 
-| 类别 | 命名格式 | 示例 |
-|------|---------|------|
-| HTTP 实现 | `{Resource}HttpApi` | `OrderHttpApi` |
-| RPC 实现 | `{Resource}RpcApi` | `OrderRpcApi` |
-| 共享接口 | `{Resource}Api` | `OrderApi`（client 模块定义） |
-| 入参/出参 | `{Resource}{Action}DTO` / `{Resource}DTO` | `OrderCreateDTO` / `OrderDTO` |
+| 类别 | 命名格式 | 示例 | 说明 |
+|------|---------|------|------|
+| HTTP 实现 | `{Resource}Http` | `OrderHttp` | `@RestController`，实现 client 的 Api 接口 |
+| RPC 实现 | `{Resource}Rpc` | `OrderRpc` | `@DubboService`，实现 client 的 Api 接口 |
+| 契约接口 | `{Resource}Api` | `OrderApi` | client 模块定义，adapter 实现该接口 |
+| 入参/出参 | `{Resource}{Action}DTO` / `{Resource}DTO` | `OrderCreateDTO` / `OrderDTO` | client 模块定义 |
 
 | 维度 | http（Feign） | rpc（Dubbo） |
 |------|-------------|-------------|
@@ -108,7 +108,7 @@ controller 与 api 区别：前者面向前端（Cmd/Qry/VO），后者面向微
 
 1. Adapter **禁止按领域划分**，必须按协议组织（controller/api/listener/scheduler）
 2. Cmd/Qry/VO 定义在 app 模块，DTO 定义在 client 模块，禁止在 adapter 中重新定义
-3. Controller/HttpApi/RpcApi **禁止编写业务逻辑**，仅做校验和转发
+3. Controller/Http/Rpc **禁止编写业务逻辑**，仅做校验和转发
 4. Adapter **禁止直接依赖 domain 或 infrastructure**
 5. Controller **必须遵循 restful-convention**；**禁止一律返回 200**
 6. http 与 rpc **禁止各自定义独立 DTO**，必须共享 client 中的同一套 DTO
