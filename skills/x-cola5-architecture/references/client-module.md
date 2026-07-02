@@ -25,7 +25,7 @@ client/src/main/java/com/{company}/{project}/client
 public interface OrderApi {
     OrderDTO getOrder(Long orderId);
     Long createOrder(OrderCreateDTO dto);
-    PageResult<OrderDTO> listOrders(OrderQueryDTO qry);
+    PagedResult<OrderDTO> listOrders(OrderQueryDTO qry);
 }
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor

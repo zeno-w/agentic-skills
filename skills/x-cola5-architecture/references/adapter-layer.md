@@ -50,7 +50,7 @@ public class OrderController {
     public OrderVO getById(@PathVariable String orderId) { return orderService.findById(orderId); }
 
     @GetMapping
-    public PageResult<OrderVO> list(OrderListQry qry) { return orderService.listOrders(qry); }
+    public PagedResult<OrderVO> list(OrderListQry qry) { return orderService.listOrders(qry); }
 
     @PutMapping("/{orderId}") @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable String orderId, @RequestBody @Valid OrderUpdateCmd cmd) { orderService.updateOrder(orderId, cmd); }
@@ -117,7 +117,7 @@ controller 与 api 区别：前者面向前端（Cmd/Qry/VO），后者面向微
 ## Recommended 规则
 
 1. 一个 Controller 对应一个领域资源
-2. 列表查询使用 `PageResult<T>` 封装分页
+2. 列表查询使用 `PagedResult<T>` 封装分页
 3. DTO↔领域对象转换放 Adapter 层
 4. Scheduler/Listener 异常捕获后记日志，不吞异常
 5. `{Resource}Api` 接口和 DTO 放 client 模块，adapter.api 实现该接口
